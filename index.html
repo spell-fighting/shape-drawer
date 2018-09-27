@@ -11,7 +11,7 @@
         .container {
             width: 500px;
             margin: 0 auto;
-            height: 100vh;
+            height: 80vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,6 +24,42 @@
 
         .canvas {
             border: 1px solid black;
+        }
+
+        .uploaded {
+            margin-top: 10px;
+            width: 100%;
+            overflow-x: scroll;
+            height: 150px;
+            overflow-y: hidden;
+            display: flex;
+        }
+
+        img {
+            height: 100px;
+            width: auto;
+        }
+
+        p {
+            margin: 0;
+            text-align: center;
+        }
+
+        .image-container {
+           height: inherit;
+            width: auto;
+            position: relative;
+        }
+
+        .image-container::before {
+            display: block;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            width: 5px;
+            height: 5px;
+            content: "x";
+            color: #ea1c2c;
         }
     </style>
 </head>
@@ -38,18 +74,21 @@
             <option value="square">Carré</option>
             <option value="star">Étoile</option>
             <option value="triangle">Triangle</option>
-            <option value="cross">Croix</option>
+            <option value="hourglass">Sablier</option>
         </select>
     </form>
-    <canvas id="canvas" class="canvas" width="500" height="500">
+    <canvas id="canvas" class="canvas" width="500" height="500"></canvas>
+    <p>Vous pouvez supprimer une image jusqu'à 10 minutes après l'avoir dessiné si vous avez fait une erreur.</p>
+</div>
+<div id="uploaded" class="uploaded">
 
-    </canvas>
 </div>
 
 <script>
     const canvas = document.querySelector("#canvas");
     const context = canvas.getContext("2d");
     const category = document.querySelector("#category");
+    const uploadedContainer = document.querySelector("#uploaded");
 
     var painting = false;
 
@@ -110,6 +149,35 @@
             .then(response => response.json())
             .then(response => {
                 console.log(response);
+                const imageElem = new Image();
+                imageElem.src = image;
+
+                const type = document.createElement("p");
+                type.innerText = category;
+
+                const imageContainer = document.createElement("div");
+                imageContainer.classList.add("image-container");
+                imageContainer.appendChild(imageElem);
+                imageContainer.appendChild(type);
+                imageContainer.onclick = function () {
+                    fetch("https://api.cloudinary.com/v1_1/djxnpx1nb/delete_by_token", {
+                        method: "POST",
+                        body: JSON.stringify({token: response.delete_token}),
+                        dataType: "json",
+                        headers: {
+                            'Content-Type': "application/json"
+                        }
+                    }).then(response => response.json())
+                        .then(() => {
+                            this.parentNode.removeChild(this);
+                        });
+                };
+
+                if (uploadedContainer.firstChild) {
+                    uploadedContainer.insertBefore(imageContainer, uploadedContainer.firstChild);
+                } else {
+                    uploadedContainer.appendChild(imageContainer);
+                }
             })
             .catch(error => console.error(error));
     };
@@ -118,6 +186,7 @@
         if (pointsX.length !== 0 && pointsY.length !== 0 && drags.length !== 0) {
             const image = canvas.toDataURL("image/png");
             upload(category.value, image);
+
         }
 
         clean();
@@ -132,7 +201,7 @@
     const redraw = () => {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
 
-        context.strokeStyle = "#df4b26";
+        context.strokeStyle = "#111";
         context.lineJoin = "round";
         context.lineWidth = 5;
 
@@ -149,8 +218,6 @@
             context.stroke();
         }
     };
-
-
 </script>
 </body>
 </html>
