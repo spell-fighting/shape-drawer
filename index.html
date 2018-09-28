@@ -23,7 +23,7 @@
         }
 
         .canvas {
-            border: 1px solid black;
+            border: 2px solid red;
         }
 
         .uploaded {
@@ -46,7 +46,7 @@
         }
 
         .image-container {
-           height: inherit;
+            height: inherit;
             width: auto;
             position: relative;
         }
@@ -61,11 +61,28 @@
             content: "x";
             color: #ea1c2c;
         }
+
+        .canvas-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+
+        .canvas-zone {
+            border: 2px green dashed;
+            width: 400px;
+            height: 400px;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            pointer-events:none;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <p style="margin-bottom: 10px">Faites le choix de la forme que vous voulez dessiner puis dessiner là à l'aide de votre souris. Lorsque vous relacher le clique celle-ci est envoyé vers le serveur.</p>
+    <p style="margin-bottom: 10px">Faites le choix de la forme que vous voulez dessiner puis dessiner là à l'aide de
+        votre souris. Lorsque vous relacher le clique celle-ci est envoyé vers le serveur.</p>
     <form class="category-form">
         <label for="category">Catégorie :</label>
 
@@ -79,7 +96,10 @@
         </select>
     </form>
     <img src="./images/shapes.png" alt="">
-    <canvas id="canvas" class="canvas" width="500" height="500"></canvas>
+    <div class="canvas-container" id="canvas-container">
+        <canvas id="canvas" class="canvas" width="500" height="500"></canvas>
+        <div class="canvas-zone"></div>
+    </div>
     <p>Vous pouvez supprimer une image jusqu'à 10 minutes après l'avoir dessiné si vous avez fait une erreur.</p>
 </div>
 <div id="uploaded" class="uploaded">
@@ -88,6 +108,7 @@
 
 <script>
     const canvas = document.querySelector("#canvas");
+    const canvasContainer = document.querySelector("#canvas-container");
     const context = canvas.getContext("2d");
     const category = document.querySelector("#category");
     const uploadedContainer = document.querySelector("#uploaded");
@@ -97,8 +118,8 @@
     canvas.addEventListener("mousedown", event => {
         if (!category.value) return;
 
-        const mouseX = event.pageX - canvas.offsetLeft;
-        const mouseY = event.pageY - canvas.offsetTop;
+        const mouseX = event.clientX - canvasContainer.offsetLeft;
+        const mouseY = event.clientY - canvasContainer.offsetTop;
 
         painting = true;
 
@@ -108,8 +129,8 @@
 
     canvas.addEventListener("mousemove", event => {
         if (painting) {
-            const mouseX = event.pageX - canvas.offsetLeft;
-            const mouseY = event.pageY - canvas.offsetTop;
+            const mouseX = event.clientX - canvasContainer.offsetLeft;
+            const mouseY = event.clientY - canvasContainer.offsetTop;
 
             addClick(mouseX, mouseY, true);
             redraw();
