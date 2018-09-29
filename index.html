@@ -35,7 +35,7 @@
             display: flex;
         }
 
-        img {
+        .preview {
             height: 100px;
             width: auto;
         }
@@ -75,7 +75,22 @@
             position: absolute;
             top: 50px;
             left: 50px;
-            pointer-events:none;
+            pointer-events: none;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .shapes {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .note {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -95,12 +110,19 @@
             <option value="hourglass">Sablier</option>
         </select>
     </form>
-    <img src="./images/shapes.png" alt="">
+    <div class="shapes hide" id="shapes">
+        <img src="./images/star.png" id="star" alt="Étoile">
+        <img src="./images/hourglass.png" id="hourglass" alt="Sablier">
+        <img src="./images/triangle.png" id="triangle" alt="Triangle">
+        <img src="./images/square.png" id="square" alt="Carré">
+        <img src="./images/circle.png" id="circle" alt="Cercle">
+    </div>
     <div class="canvas-container" id="canvas-container">
         <canvas id="canvas" class="canvas" width="500" height="500"></canvas>
         <div class="canvas-zone"></div>
     </div>
-    <p>Vous pouvez supprimer une image jusqu'à 10 minutes après l'avoir dessiné si vous avez fait une erreur.</p>
+    <p class="note">Vous pouvez supprimer une image jusqu'à 10 minutes après l'avoir dessiné si vous avez fait une
+        erreur.</p>
 </div>
 <div id="uploaded" class="uploaded">
 
@@ -111,9 +133,30 @@
     const canvasContainer = document.querySelector("#canvas-container");
     const context = canvas.getContext("2d");
     const category = document.querySelector("#category");
+    const shapes = document.querySelector("#shapes");
     const uploadedContainer = document.querySelector("#uploaded");
+    const CLOUD_NAME = "djxnpx1nb";
 
     var painting = false;
+
+    (() => {
+        shapes.classList.remove("hide");
+        document.querySelector("#star").addEventListener("click", function () {
+            category.value = this.id;
+        });
+        document.querySelector("#circle").addEventListener("click", function () {
+            category.value = this.id;
+        });
+        document.querySelector("#hourglass").addEventListener("click", function () {
+            category.value = this.id;
+        });
+        document.querySelector("#triangle").addEventListener("click", function () {
+            category.value = this.id;
+        });
+        document.querySelector("#square").addEventListener("click", function () {
+            category.value = this.id;
+        });
+    })();
 
     canvas.addEventListener("mousedown", event => {
         if (!category.value) return;
@@ -165,7 +208,7 @@
         form.append("upload_preset", "oi5vpmhy");
         form.append("folder", category);
 
-        fetch("https://api.cloudinary.com/v1_1/djxnpx1nb/image/upload", {
+        fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
             method: "POST",
             body: form
         })
@@ -174,6 +217,7 @@
                 console.log(response);
                 const imageElem = new Image();
                 imageElem.src = image;
+                imageElem.classList.add("preview");
 
                 const type = document.createElement("p");
                 type.innerText = category;
@@ -183,7 +227,7 @@
                 imageContainer.appendChild(imageElem);
                 imageContainer.appendChild(type);
                 imageContainer.onclick = function () {
-                    fetch("https://api.cloudinary.com/v1_1/djxnpx1nb/delete_by_token", {
+                    fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`, {
                         method: "POST",
                         body: JSON.stringify({token: response.delete_token}),
                         dataType: "json",
@@ -209,7 +253,6 @@
         if (pointsX.length !== 0 && pointsY.length !== 0 && drags.length !== 0) {
             const image = canvas.toDataURL("image/png");
             upload(category.value, image);
-
         }
 
         clean();
@@ -227,7 +270,6 @@
         context.strokeStyle = "#111";
         context.lineJoin = "round";
         context.lineWidth = 5;
-
 
         for (let i = 0; i < pointsX.length; i++) {
             context.beginPath();
