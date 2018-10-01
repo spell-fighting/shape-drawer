@@ -16,15 +16,22 @@
         }
 
         body {
+            margin: 0;
             font-family: 'PT Mono', monospace;
             background-color: #ffffff;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23e7e7e7' fill-opacity='0.4'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
+        .prediction {
+            position: fixed;
+            margin-left: 10px;
+            font-family: Verdana;
+        }
+
         .container {
             width: 500px;
             margin: 0 auto;
-            height: calc(100vh - 256px);
+            height: calc(100vh - 170px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -41,8 +48,6 @@
         }
 
         .uploaded {
-            padding-top: 60px;
-            margin-top: 10px;
             width: 100%;
             overflow-x: scroll;
             height: 170px;
@@ -103,7 +108,7 @@
             transform: scale(0) rotate(0deg) !important;
         }
 
-        canvas {
+        .canvas {
             z-index: 2;
             position: absolute;
         }
@@ -166,10 +171,24 @@
         .note {
             margin-top: 10px;
         }
+
+        .best {
+            color: #4CAF50;
+        }
     </style>
     <title>Shape Drawer</title>
 </head>
 <body>
+<div class="prediction">
+    <h4>Prédiction</h4>
+    <ul>
+        <li>Cercle <span id="circle-prediction">0</span>%</li>
+        <li>Sablier <span id="hourglass-prediction">0</span>%</li>
+        <li>Carré <span id="square-prediction">0</span>%</li>
+        <li>Étoiles <span id="star-prediction">0</span>%</li>
+        <li>Triangle <span id="triangle-prediction">0</span>%</li>
+    </ul>
+</div>
 <div class="container">
     <p style="margin-bottom: 10px">Choississez une forme puis dessinez-la avec une souris. Lorsque vous relachez le
         clique celle-ci est envoyée.</p>
@@ -196,14 +215,15 @@
         <div class="canvas-zone"></div>
         <canvas id="canvas" class="canvas" width="500" height="500"></canvas>
     </div>
+
     <p class="note">Vous pouvez supprimer une image jusqu'à 10 minutes après l'avoir dessiné si vous avez fait une
         erreur.</p>
 </div>
 <div id="uploaded" class="uploaded">
 
 </div>
-
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0"></script>
+<script type="module">
     const canvas = document.querySelector("#canvas");
     const canvasContainer = document.querySelector("#canvas-container");
     const context = canvas.getContext("2d");
@@ -212,158 +232,210 @@
     const uploadedContainer = document.querySelector("#uploaded");
     const CLOUD_NAME = "djxnpx1nb";
     const images = document.querySelectorAll('.shapes img');
+    const predict = async (tf, model, image) => {
+        let pixels = tf.image.resizeBilinear(tf.fromPixels(image), [64, 64]);
+
+        pixels = pixels.reshape([1, 64, 64, 3]);
+        return model.predict(pixels).dataSync().map(x => parseInt(x * 100, 10));
+    };
 
     var painting = false;
 
-    function toggle(el) {
-        category.value = el.id;
-        images.forEach((shape) => {
-            shape.classList.remove('active');
-        });
-        document.querySelector(`#${el.id}`).classList.add('active');
-    }
+    tf.loadModel("https://res.cloudinary.com/djxnpx1nb/raw/upload/v1538333150/models/model_v1.json")
+        .then(model => {
 
-    (() => {
-        document.querySelector('form').classList.add("hide");
-        shapes.classList.remove("hide");
-        images.forEach((image) => {
-            image.addEventListener("click", function () {
-                toggle(this);
-            });
-        });
-    })();
 
-    canvas.addEventListener("mousedown", event => {
-        if (!category.value) return;
-
-        const mouseX = event.clientX - canvasContainer.offsetLeft;
-        const mouseY = event.clientY - canvasContainer.offsetTop;
-
-        painting = true;
-
-        addClick(mouseX, mouseY);
-        redraw();
-    }, false);
-
-    canvas.addEventListener("mousemove", event => {
-        if (painting) {
-            const mouseX = event.clientX - canvasContainer.offsetLeft;
-            const mouseY = event.clientY - canvasContainer.offsetTop;
-
-            addClick(mouseX, mouseY, true);
-            redraw();
-        }
-    });
-
-    canvas.addEventListener("mouseup", () => {
-        painting = false;
-
-        onEnd();
-    });
-
-    canvas.addEventListener("mouseleave", () => {
-        painting = false;
-        clean();
-    });
-
-    let pointsX = [];
-    let pointsY = [];
-    let drags = [];
-
-    const clean = () => {
-        pointsX = [];
-        pointsY = [];
-        drags = [];
-        redraw();
-    };
-
-    const upload = (category, image) => {
-        const form = new FormData();
-        form.append("file", image);
-        form.append("upload_preset", "oi5vpmhy");
-        form.append("folder", category);
-
-        fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-            method: "POST",
-            body: form
-        })
-            .then(response => response.json())
-            .then(response => {
-                console.log(response);
-                const imageElem = new Image();
-                imageElem.src = image;
-                imageElem.classList.add("preview");
-
-                const type = document.createElement("p");
-                type.innerText = category;
-
-                const imageContainer = document.createElement("div");
-                imageContainer.classList.add("image-container");
-                imageContainer.appendChild(imageElem);
-                imageContainer.appendChild(type);
-                imageContainer.onclick = function () {
-                    fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`, {
-                        method: "POST",
-                        body: JSON.stringify({token: response.delete_token}),
-                        dataType: "json",
-                        headers: {
-                            'Content-Type': "application/json"
-                        }
-                    }).then(response => response.json())
-                        .then(() => {
-                            imageContainer.classList.add("remove");
-                        })
-                        .then(() => {
-                            setTimeout(() => {
-                                this.parentNode.removeChild(this)
-                            }, 400)
-                        })
-
-                };
-
-                if (uploadedContainer.firstChild) {
-                    uploadedContainer.insertBefore(imageContainer, uploadedContainer.firstChild);
-                } else {
-                    uploadedContainer.appendChild(imageContainer);
-                }
-            })
-            .catch(error => console.error(error));
-    };
-
-    const onEnd = () => {
-        if (pointsX.length !== 0 && pointsY.length !== 0 && drags.length !== 0) {
-            const image = canvas.toDataURL("image/png");
-            upload(category.value, image);
-        }
-
-        clean();
-    };
-
-    const addClick = (x, y, dragging = false) => {
-        pointsX.push(x);
-        pointsY.push(y);
-        drags.push(dragging);
-    };
-
-    const redraw = () => {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
-
-        context.strokeStyle = "#111";
-        context.lineJoin = "round";
-        context.lineWidth = 5;
-
-        for (let i = 0; i < pointsX.length; i++) {
-            context.beginPath();
-            if (drags[i] && i) {
-                context.moveTo(pointsX[i - 1], pointsY[i - 1]);
-            } else {
-                context.moveTo(pointsX[i] - 1, pointsY[i]);
+            function toggle(el) {
+                category.value = el.id;
+                images.forEach((shape) => {
+                    shape.classList.remove('active');
+                });
+                document.querySelector(`#${el.id}`).classList.add('active');
             }
-            context.lineTo(pointsX[i], pointsY[i]);
-            context.closePath();
-            context.stroke();
-        }
-    };
+
+            (() => {
+                document.querySelector('form').classList.add("hide");
+                shapes.classList.remove("hide");
+                images.forEach((image) => {
+                    image.addEventListener("click", function () {
+                        toggle(this);
+                    });
+                });
+            })();
+
+            canvas.addEventListener("mousedown", event => {
+                if (!category.value) return;
+
+                const mouseX = event.clientX - canvasContainer.offsetLeft;
+                const mouseY = event.clientY - canvasContainer.offsetTop;
+
+                painting = true;
+
+                addClick(mouseX, mouseY);
+                redraw();
+            }, false);
+
+            canvas.addEventListener("mousemove", event => {
+                if (painting) {
+                    const mouseX = event.clientX - canvasContainer.offsetLeft;
+                    const mouseY = event.clientY - canvasContainer.offsetTop;
+
+                    addClick(mouseX, mouseY, true);
+                    redraw();
+                }
+            });
+
+            canvas.addEventListener("mouseup", () => {
+                painting = false;
+
+                onEnd();
+            });
+
+            canvas.addEventListener("mouseleave", () => {
+                painting = false;
+                clean();
+            });
+
+            let pointsX = [];
+            let pointsY = [];
+            let drags = [];
+
+            const clean = () => {
+                pointsX = [];
+                pointsY = [];
+                drags = [];
+                redraw();
+            };
+
+            const upload = (category, image) => {
+                const form = new FormData();
+                form.append("file", image);
+                form.append("upload_preset", "oi5vpmhy");
+                form.append("folder", category);
+
+                fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                    method: "POST",
+                    body: form
+                })
+                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        const imageElem = new Image();
+                        imageElem.src = image;
+                        imageElem.classList.add("preview");
+
+                        const type = document.createElement("p");
+                        type.innerText = category;
+
+                        const imageContainer = document.createElement("div");
+                        imageContainer.classList.add("image-container");
+                        imageContainer.appendChild(imageElem);
+                        imageContainer.appendChild(type);
+                        imageContainer.onclick = function () {
+                            fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`, {
+                                method: "POST",
+                                body: JSON.stringify({token: response.delete_token}),
+                                dataType: "json",
+                                headers: {
+                                    'Content-Type': "application/json"
+                                }
+                            }).then(response => response.json())
+                                .then(() => {
+                                    imageContainer.classList.add("remove");
+                                })
+                                .then(() => {
+                                    setTimeout(() => {
+                                        this.parentNode.removeChild(this)
+                                    }, 400)
+                                })
+
+                        };
+
+                        if (uploadedContainer.firstChild) {
+                            uploadedContainer.insertBefore(imageContainer, uploadedContainer.firstChild);
+                        } else {
+                            uploadedContainer.appendChild(imageContainer);
+                        }
+                    })
+                    .catch(error => console.error(error));
+            };
+
+            const renderPrediction = (predictions) => {
+                document.querySelector("#circle-prediction").innerText = predictions[0];
+                document.querySelector("#hourglass-prediction").innerText = predictions[1];
+                document.querySelector("#square-prediction").innerText = predictions[2];
+                document.querySelector("#star-prediction").innerText = predictions[3];
+                document.querySelector("#triangle-prediction").innerText = predictions[4];
+
+                document.querySelector("#circle-prediction").parentElement.classList.remove("best");
+                document.querySelector("#hourglass-prediction").parentElement.classList.remove("best");
+                document.querySelector("#square-prediction").parentElement.classList.remove("best");
+                document.querySelector("#star-prediction").parentElement.classList.remove("best");
+                document.querySelector("#triangle-prediction").parentElement.classList.remove("best");
+
+                const maxIndex = predictions.findIndex(v => v === Math.max(...predictions));
+                switch (maxIndex) {
+                    case 0:
+                        document.querySelector("#circle-prediction").parentElement.classList.add("best");
+                        break;
+                    case 1:
+                        document.querySelector("#hourglass-prediction").parentElement.classList.add("best");
+                        break;
+                    case 2:
+                        document.querySelector("#square-prediction").parentElement.classList.add("best");
+                        break;
+                    case 3:
+                        document.querySelector("#star-prediction").parentElement.classList.add("best");
+                        break;
+                    case 4:
+                        document.querySelector("#triangle-prediction").parentElement.classList.add("best");
+                        break;
+                }
+            };
+
+
+            const onEnd = () => {
+                if (pointsX.length !== 0 && pointsY.length !== 0 && drags.length !== 0) {
+                    upload(category.value, canvas.toDataURL("image/png"));
+
+                    const image = context.getImageData(0, 0, canvas.width, canvas.height);
+
+                    predict(tf, model, image)
+                        .then(renderPrediction)
+                        .catch(console.error);
+                }
+
+                clean();
+            };
+
+            const addClick = (x, y, dragging = false) => {
+                pointsX.push(x);
+                pointsY.push(y);
+                drags.push(dragging);
+            };
+
+            const redraw = () => {
+                context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+
+                context.strokeStyle = "#111";
+                context.lineJoin = "round";
+                context.lineWidth = 5;
+
+                for (let i = 0; i < pointsX.length; i++) {
+                    context.beginPath();
+                    if (drags[i] && i) {
+                        context.moveTo(pointsX[i - 1], pointsY[i - 1]);
+                    } else {
+                        context.moveTo(pointsX[i] - 1, pointsY[i]);
+                    }
+                    context.lineTo(pointsX[i], pointsY[i]);
+                    context.closePath();
+                    context.stroke();
+                }
+            };
+
+        })
+        .catch(console.error);
 </script>
 </body>
 </html>
