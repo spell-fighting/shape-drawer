@@ -263,7 +263,8 @@
                 });
             })();
 
-            canvas.addEventListener("mousedown", event => {
+            function onMouseDown(event) {
+                console.log(event);
                 if (!category.value) return;
 
                 const mouseX = event.clientX - canvasContainer.offsetLeft;
@@ -273,9 +274,9 @@
 
                 addClick(mouseX, mouseY);
                 redraw();
-            }, false);
+            }
 
-            canvas.addEventListener("mousemove", event => {
+            function onMouseMove(event) {
                 if (painting) {
                     const mouseX = event.clientX - canvasContainer.offsetLeft;
                     const mouseY = event.clientY - canvasContainer.offsetTop;
@@ -283,18 +284,38 @@
                     addClick(mouseX, mouseY, true);
                     redraw();
                 }
-            });
+            }
 
-            canvas.addEventListener("mouseup", () => {
+            function onMouseUp() {
                 painting = false;
 
                 onEnd();
-            });
+            }
 
-            canvas.addEventListener("mouseleave", () => {
+            function onMouseLeave() {
                 painting = false;
+
                 clean();
-            });
+            }
+
+            canvas.addEventListener("mousedown", onMouseDown, false);
+
+            canvas.addEventListener("mousemove", onMouseMove, false);
+
+            canvas.addEventListener("mouseup", onMouseUp, false);
+
+            canvas.addEventListener("mouseleave", onMouseLeave, false);
+
+
+            canvas.addEventListener("touchstart", onMouseDown, false);
+
+            canvas.addEventListener("touchmove", onMouseMove, false);
+
+            canvas.addEventListener("touchend", onMouseUp, false);
+
+            canvas.addEventListener("touchleave", onMouseLeave, false);
+
+            canvas.addEventListener("touchcancel", onMouseLeave, false);
 
             let pointsX = [];
             let pointsY = [];
@@ -396,12 +417,13 @@
 
             const onEnd = () => {
                 if (pointsX.length !== 0 && pointsY.length !== 0 && drags.length !== 0) {
-                    upload(category.value, canvas.toDataURL("image/png"));
+                    upload(category.value, canvas.toDataURL("image/png"))
+                        .then(() => {
+                            const image = context.getImageData(0, 0, canvas.width, canvas.height);
 
-                    const image = context.getImageData(0, 0, canvas.width, canvas.height);
-
-                    predict(tf, model, image)
-                        .then(renderPrediction)
+                            return predict(tf, model, image)
+                                .then(renderPrediction);
+                        })
                         .catch(console.error);
                 }
 
