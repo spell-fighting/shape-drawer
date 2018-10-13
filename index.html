@@ -323,7 +323,7 @@
                 form.append("upload_preset", "oi5vpmhy");
                 form.append("folder", category);
 
-                fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                return fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
                     method: "POST",
                     body: form
                 })
@@ -366,8 +366,7 @@
                         } else {
                             uploadedContainer.appendChild(imageContainer);
                         }
-                    })
-                    .catch(error => console.error(error));
+                    });
             };
 
             const renderPrediction = (predictions) => {
