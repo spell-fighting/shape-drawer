@@ -235,7 +235,7 @@
     const predict = async (tf, model, image) => {
         let pixels = tf.image.resizeBilinear(tf.fromPixels(image), [32, 32]);
 
-        pixels = pixels.reshape([1, 32, 32, 3]);
+        pixels = pixels.reshape([1, 32, 32, 1]);
         return model.predict(pixels).dataSync().map(x => parseInt(x * 100, 10));
     };
 
