@@ -233,8 +233,21 @@
     const CLOUD_NAME = "djxnpx1nb";
     const images = document.querySelectorAll('.shapes img');
     const predict = async (tf, model, image) => {
-        let pixels = tf.image.resizeBilinear(tf.fromPixels(image), [32, 32]);
+        let data = image.data;
+        for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] === 0 && (data[i] + data[i + 1] + data[i + 2]) === 0) {
+                data[i + 3] = 255;
+            } else {
+                // red
+                data[i] = 255 - data[i];
+                // green
+                data[i + 1] = 255 - data[i + 1];
+                // blue
+                data[i + 2] = 255 - data[i + 2];
+            }
+        }
 
+        let pixels = tf.image.resizeBilinear(tf.fromPixels(image, 1), [32, 32]);
         pixels = pixels.reshape([1, 32, 32, 1]);
         return model.predict(pixels).dataSync().map(x => parseInt(x * 100, 10));
     };
@@ -264,7 +277,6 @@
             })();
 
             function onMouseDown(event) {
-                console.log(event);
                 if (!category.value) return;
 
                 const mouseX = event.clientX - canvasContainer.offsetLeft;
@@ -329,7 +341,6 @@
                 })
                     .then(response => response.json())
                     .then(response => {
-                        console.log(response);
                         const imageElem = new Image();
                         imageElem.src = image;
                         imageElem.classList.add("preview");
@@ -405,10 +416,9 @@
 
             const onEnd = () => {
                 if (pointsX.length !== 0 && pointsY.length !== 0 && drags.length !== 0) {
+                    const image = context.getImageData(0, 0, canvas.width, canvas.height);
                     upload(category.value, canvas.toDataURL("image/png"))
                         .then(() => {
-                            const image = context.getImageData(0, 0, canvas.width, canvas.height);
-
                             return predict(tf, model, image)
                                 .then(renderPrediction);
                         })
@@ -427,7 +437,7 @@
             const redraw = () => {
                 context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
 
-                context.strokeStyle = "#111";
+                context.strokeStyle = "#000";
                 context.lineJoin = "round";
                 context.lineWidth = 5;
 
