@@ -232,6 +232,7 @@
     const uploadedContainer = document.querySelector("#uploaded");
     const CLOUD_NAME = "djxnpx1nb";
     const images = document.querySelectorAll('.shapes img');
+    const SIZE = 28;
     const predict = async (tf, model, image) => {
         let data = image.data;
         for (let i = 0; i < data.length; i += 4) {
@@ -247,14 +248,16 @@
             }
         }
 
-        let pixels = tf.image.resizeBilinear(tf.fromPixels(image, 1), [32, 32]);
-        pixels = pixels.reshape([1, 32, 32, 1]);
+        let pixels = tf.image.resizeBilinear(tf.fromPixels(image, 1), [SIZE, SIZE]);
+        pixels = pixels.reshape([1, SIZE, SIZE, 1]).toFloat();
         return model.predict(pixels).dataSync().map(x => parseInt(x * 100, 10));
     };
+    const MODEL_URL = "https://res.cloudinary.com/djxnpx1nb/raw/upload/v1543480736/models/tensorflowjs_model.pb";
+    const WEIGHTS_URL = "https://res.cloudinary.com/djxnpx1nb/raw/upload/v1543480736/models/weights_manifest.json";
 
     var painting = false;
 
-    tf.loadModel("https://res.cloudinary.com/djxnpx1nb/raw/upload/v1538333150/models/model_v1.json")
+    tf.loadFrozenModel(MODEL_URL, WEIGHTS_URL)
         .then(model => {
 
 
@@ -381,11 +384,11 @@
             };
 
             const renderPrediction = (predictions) => {
-                document.querySelector("#circle-prediction").innerText = predictions[0];
-                document.querySelector("#hourglass-prediction").innerText = predictions[1];
-                document.querySelector("#square-prediction").innerText = predictions[2];
-                document.querySelector("#star-prediction").innerText = predictions[3];
-                document.querySelector("#triangle-prediction").innerText = predictions[4];
+                document.querySelector("#square-prediction").innerText = predictions[0];
+                document.querySelector("#circle-prediction").innerText = predictions[1];
+                document.querySelector("#hourglass-prediction").innerText = predictions[2];
+                document.querySelector("#triangle-prediction").innerText = predictions[3];
+                document.querySelector("#star-prediction").innerText = predictions[4];
 
                 document.querySelector("#circle-prediction").parentElement.classList.remove("best");
                 document.querySelector("#hourglass-prediction").parentElement.classList.remove("best");
@@ -396,19 +399,19 @@
                 const maxIndex = predictions.findIndex(v => v === Math.max(...predictions));
                 switch (maxIndex) {
                     case 0:
-                        document.querySelector("#circle-prediction").parentElement.classList.add("best");
-                        break;
-                    case 1:
-                        document.querySelector("#hourglass-prediction").parentElement.classList.add("best");
-                        break;
-                    case 2:
                         document.querySelector("#square-prediction").parentElement.classList.add("best");
                         break;
+                    case 1:
+                        document.querySelector("#circle-prediction").parentElement.classList.add("best");
+                        break;
+                    case 2:
+                        document.querySelector("#hourglass-prediction").parentElement.classList.add("best");
+                        break;
                     case 3:
-                        document.querySelector("#star-prediction").parentElement.classList.add("best");
+                        document.querySelector("#triangle-prediction").parentElement.classList.add("best");
                         break;
                     case 4:
-                        document.querySelector("#triangle-prediction").parentElement.classList.add("best");
+                        document.querySelector("#star-prediction").parentElement.classList.add("best");
                         break;
                 }
             };
