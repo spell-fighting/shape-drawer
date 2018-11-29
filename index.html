@@ -252,8 +252,8 @@
         pixels = pixels.reshape([1, SIZE, SIZE, 1]).toFloat();
         return model.predict(pixels).dataSync().map(x => parseInt(x * 100, 10));
     };
-    const MODEL_URL = "https://res.cloudinary.com/djxnpx1nb/raw/upload/v1543480736/models/tensorflowjs_model.pb";
-    const WEIGHTS_URL = "https://res.cloudinary.com/djxnpx1nb/raw/upload/v1543480736/models/weights_manifest.json";
+    const MODEL_URL = "https://res.cloudinary.com/djxnpx1nb/raw/upload/models/tensorflowjs_model.pb";
+    const WEIGHTS_URL = "https://res.cloudinary.com/djxnpx1nb/raw/upload/models/weights_manifest.json";
 
     var painting = false;
 
